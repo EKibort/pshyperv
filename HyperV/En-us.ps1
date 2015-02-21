@@ -1,4 +1,4 @@
-$HyperVNamespace                      = "root\virtualization"
+$HyperVNamespace                      = "root\virtualization\v2"
 $ImageManagementServiceName           = "Msvm_ImageManagementService"
 $VirtualSystemManagementServiceName   = "Msvm_VirtualSystemManagementService"
 

@@ -61,7 +61,8 @@ Function Get-VM
             $Name = $Name.Replace("*","%")
             # Note: in V1 the test was for caption like "Virtual%" which did not work in languages other than English.
             # Thanks to Ronald Beekelaar -  we now test for a processID , the host has a null process ID, stopped VMs have an ID of 0. 
-            $WQL = "SELECT * FROM MSVM_ComputerSystem WHERE ElementName LIKE '$Name' AND ProcessID >= 0"
+            # V2: ProcessID has null for stoped VMs
+            $WQL = "SELECT * FROM MSVM_ComputerSystem WHERE ElementName LIKE '$Name' AND InstallDate IS NOT NULL"
             if ($Running -or $Stopped -or $Suspended) { 
                 $state = "" 
                 if ($Running)   {$State += " or enabledState = " + [int][VMState]::Running   }
