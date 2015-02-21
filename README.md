@@ -1,3 +1,13 @@
+#### FORK Description
+The main goal of this fork supports working on Windows 2012 R2 Hyper-V. 
+
+Start from Windows 2012 Microsoft has stoped supporting of 'root\virtualization' WMI interface and supports only 'root\virtualization\v2' interface. This new interface not fully compatible with old as result old versions of pshyperv does not work on new Hyper-V.
+ 
+This version of pshyperv will not work on Windows 2008 and Windows 2008 R2 Hyper-V! Please use original version of pshyperv module.
+
+Thank you.
+
+
 # pshyperv
 ========
 
