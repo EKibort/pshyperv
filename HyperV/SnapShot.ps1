@@ -150,11 +150,12 @@ Function Restore-VMSnapshot
         if ($psc -eq $null)  {$psc = $pscmdlet} ; if (-not $PSBoundParameters.psc) {$PSBoundParameters.add("psc",$psc)}
          if ($SnapShot.count -gt 1 ) {[Void]$PSBoundParameters.Remove("SnapShot") ;  $SnapShot | ForEach-object {Restore-snapshot -snapshot $_  @PSBoundParameters}} 
          if ($snapshot.__class -eq 'Msvm_VirtualSystemSettingData') {
-             $VM = Get-WmiObject -computername $snapshot.__server -NameSpace "root\virtualization" -Query ("Select * From MsVM_ComputerSystem Where Name='$($Snapshot.systemName)' " )
+             $VM = Get-WmiObject -computername $snapshot.__server -NameSpace $HyperVNamespace -Query ("Select * From MsVM_ComputerSystem Where Name='$($Snapshot.VirtualSystemIdentifier)' " )
+
              if ($vm.enabledState -ne [vmstate]::stopped) {write-warning ($lstr_VMWillBeStopped -f $vm.elementname , [vmstate]$vm.enabledState) ; Stop-VM $vm -wait -psc $psc -force:$force}
              if ($force -or $psc.shouldProcess($vm.ElementName , $Lstr_RestoreSnapShot)) {
-                 $VSMgtSvc=Get-WmiObject -ComputerName $snapshot.__server -NameSpace  "root\virtualization" -Class "MsVM_virtualSystemManagementService" 
-                 if ( ($VSMgtSvc.ApplyVirtualSystemSnapshot($VM,$snapshot)  | Test-wmiResult -wait:$wait -JobWaitText ($lstr_RestoreSnapShot + $vm.elementName)`
+                 $VSMgtSvc=Get-WmiObject -ComputerName $snapshot.__server -NameSpace  $HyperVNamespace -Class "Msvm_VirtualSystemSnapshotService" 
+                 if ( ($VSMgtSvc.ApplySnapshot($snapshot)  | Test-wmiResult -wait:$wait -JobWaitText ($lstr_RestoreSnapShot + $vm.elementName)`
                                                                             -SuccessText ($lstr_RestoreSnapShotSuccess -f $VM.elementname) `
                                                                             -failText ($lstr_RestoreSnapShotFailure -f  $vm.elementname) ) -eq [returnCode]::ok) {if ($Restart) {Start-vm $vm}  }
               }
